@@ -11,7 +11,7 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "args": [
-                "--video_file_path", "C:/Users/Usuario/source/repos/2024-Livestream/data/Calle 127 X Autopista/CAM 12/test.dav"
+                "--video_file_path", "C:/Users/Usuario/source/repos/YoloCuento/data/Calle 127 X Autopista/CAM 12/test.dav"
             ]
         }
     ]

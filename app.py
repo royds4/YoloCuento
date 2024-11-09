@@ -9,13 +9,14 @@ from ultralytics import YOLO
 CLASSES = [1,2,3,5,7]
 VIDEOPATH=""
 model = YOLO("yolo11x.pt")
-print(model.names)
 tracker = sv.ByteTrack(minimum_consecutive_frames=3)
 tracker.reset()
 smoother =sv.DetectionsSmoother()
 box_annotator = sv.BoxAnnotator()
 label_annotator = sv.LabelAnnotator()
 trace_annotator = sv.TraceAnnotator(trace_length=60)
+lineZones =[]
+lineZoneAnnotators = []
 
 
 def readJsonFile(file_path):
@@ -44,8 +45,7 @@ def processLines(camera,video_file_path):
     POLYGON = np.array(camera.get("polygon",[]), dtype= np.int32)  
 
     lines = camera.get("lines",[])
-    lineZones =[]
-    lineZoneAnnotators = []
+    
     for line in lines:
         lineStart = sv.Point(line.get('start1',0),line.get('start2',0))
         lineEnd = sv.Point(line.get('end1',0),line.get('end2',0))
@@ -73,7 +73,7 @@ def processLines(camera,video_file_path):
 def processFrameAnnotator(POLYGON, lineZones, lineZoneAnnotators, video_file_path):
     frame_generator = sv.get_video_frames_generator(source_path=video_file_path)
     for frame in frame_generator:
-        result = model(frame, device="cuda", verbose= False, imgsz = 1920)[0]
+        result = model(frame, device="cuda", verbose= False, imgsz = 1920, conf=0.3, iou = 0.7 )[0]
         polygon_zone = sv.PolygonZone(polygon=POLYGON, triggering_anchors= (sv.Position.CENTER,))    
         detections = sv.Detections.from_ultralytics(result)
         detections[polygon_zone.trigger(detections)]
@@ -139,6 +139,18 @@ def main(video_file_path):
     currentIntersection= Path(video_file_path).parent.parent.name
     processIntersection(data, currentIntersection,currentCamera, video_file_path)
 
+def processJsonResults():
+    result = {}
+    lineZoneCounter = 0
+    for lineZone in lineZones:        
+        lineZoneId = 'lineZone'+ str(lineZoneCounter) #TODO: Map lineZoneId with Movement Name
+        result[lineZoneId] = {}
+        for Class in CLASSES:                     
+            if Class in lineZone.in_count_per_class.keys():
+                modelName = str(lineZone.class_id_to_name[Class])
+                result['lineZone'+ str(lineZoneCounter)][modelName] = lineZone.in_count_per_class[Class]
+        lineZoneCounter= lineZoneCounter +1
+    return json.dumps(result)
        
 
 if __name__ =="__main__":
@@ -147,3 +159,5 @@ if __name__ =="__main__":
     args = parser.parse_args()
 
     main(args.video_file_path)
+    print(processJsonResults())
+    

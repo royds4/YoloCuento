@@ -4,19 +4,22 @@ import json
 import os
 
 
-def run():
+
+def run(folder_path):
     # Call the second Python script and capture its output
-    folder_path = "C:/Users/Usuario/source/repos/2024-Livestream/data"
     file_list = os.listdir(folder_path)
 
     for file_name in file_list:
-        params = [
-        '--video_file_path', folder_path+ '/'+file_name
-        ]
-        result = subprocess.run(['python', 'app.py'] + params, capture_output=True, text=True)
-        output = result.stdout
-        #variables = json.loads(output.strip())
-        # buildExcel(variables)
+        if 'dav' not in file_name:
+            run(folder_path + '/' + file_name)
+        else:
+            params = [
+            '--video_file_path', folder_path+ '/'+file_name
+            ]
+            result = subprocess.run(['venv/Scripts/python', 'app.py'] + params, capture_output=True, text=True)
+            output = result.stdout
+            variables = json.loads(output.strip())
+            # buildExcel(variables)
 
    
 
@@ -61,4 +64,5 @@ def buildExcel(variables):
 
 
 if __name__ == "__main__":
-    run()
+    folderPath = "C:/Users/Usuario/source/repos/YoloCuento/data"
+    run(folderPath)
