@@ -1,0 +1,52 @@
+{
+  "movements": [
+    {"id": "1d4b7a70-f65a-11ec-b939-0242ac120002", "movement": "7", "direction": "west"},
+    {"id": "22b5c9e0-f65a-11ec-b939-0242ac120002", "movement": "3", "direction": "west"},
+    {"id": "27e07b00-f65a-11ec-b939-0242ac120002", "movement": "10(3)", "direction": "west"},
+    {"id": "2d0b2c20-f65a-11ec-b939-0242ac120002", "movement": "9(3)", "direction": "west"},
+    {"id": "3207dd40-f65a-11ec-b939-0242ac120002", "movement": "1", "direction": "north"},
+    {"id": "373e8e60-f65a-11ec-b939-0242ac120002", "movement": "5", "direction": "north"},
+    {"id": "3c75af80-f65a-11ec-b939-0242ac120002", "movement": "9(5)", "direction": "north"},
+    {"id": "41acb0a0-f65a-11ec-b939-0242ac120002", "movement": "10(5)", "direction": "north"},
+    {"id": "471205c0-f65a-11ec-b939-0242ac120002", "movement": "4", "direction": "east"},
+    {"id": "4c68b6e0-f65a-11ec-b939-0242ac120002", "movement": "8", "direction": "east"},
+    {"id": "51bf1800-f65a-11ec-b939-0242ac120002", "movement": "9(4)", "direction": "east"},
+    {"id": "57327920-f65a-11ec-b939-0242ac120002", "movement": "10(4)", "direction": "east"},
+    {"id": "5c69da40-f65a-11ec-b939-0242ac120002", "movement": "6", "direction":"south"},
+    {"id": "61b13b60-f65a-11ec-b939-0242ac120002", "movement": "2", "direction":"south"},
+    {"id": "66f89c80-f65a-11ec-b939-0242ac120002", "movement": "10(2)", "direction": "south"},
+    {"id": "6c3ffd00-f65a-11ec-b939-0242ac120002", "movement": "9(2)", "direction": "south"}
+  ]
+,
+
+ "intersections": [
+   {"id":"", 
+   "name": "Calle 127 X Autopista", 
+   "cameras":[ 
+						 {
+						  "id":"",
+						  "name": "CAM 12",
+						  "movements": [],
+              "polygon"	: [
+                            [920.9510181618052,1079.1576774903688],
+                            [1024.4523940561364,746.4746835443038],
+                            [1105.7749036873968,444.4196477710512],
+                            [1912.663181067694,608.1208035222895],
+                            [1910.5509080902586,475.0476059438635],
+                            [1207.1640066042928,370.49009356081456],
+                            [1159.6378646119979,296.56053935057787],
+                            [960.0280682443589,291.27985690698955],
+                            [795.2707760044029,332.4691799669786],
+                            [2.112272977435333,373.65850302696754],
+                            [0,1079.1576774903688]
+                          ],
+              "lines" : [
+                 { "start1":332, "start2":277, "end1":341, "end2":482},
+                 { "start1":0, "start2":0, "end1":1920, "end2":1080},
+                 { "start1":1200, "start2":470, "end1":1306, "end2":317}
+              ]
+						 }
+						]
+   }
+ ]
+}
