@@ -8,6 +8,7 @@ from ultralytics import YOLO
 
 CLASSES = [1,2,3,5,7]
 VIDEOPATH=""
+LINES = []
 model = YOLO("yolo11x.pt")
 tracker = sv.ByteTrack(minimum_consecutive_frames=3)
 tracker.reset()
@@ -29,22 +30,28 @@ def processIntersection(data, currentIntersection, currentCamera,video_file_path
     for intersection in intersections:
         name = intersection.get("name",'')
         if currentIntersection in name:
-            processCameras(intersection, currentCamera, video_file_path)
-            return
+            return processCameras(intersection, currentCamera, video_file_path)           
             
-
 def processCameras(intersection, currentCamera, video_file_path):
     cameras = intersection.get("cameras",[])
+    cameraProcessed = False
     for camera in cameras:
         cameraName = camera.get("name",'')
         if currentCamera in cameraName:
-            processLines(camera, video_file_path)
-            return
+            cameraProcessed = True
+            return processLines(camera, video_file_path)            
+    if cameraProcessed == False:
+        processFrameAnnotator(
+            POLYGON=[],
+            lineZones=[],
+            lineZoneAnnotators=[],
+            video_file_path=video_file_path)
+        return []
             
 def processLines(camera,video_file_path):
     POLYGON = np.array(camera.get("polygon",[]), dtype= np.int32)  
 
-    lines = camera.get("lines",[])
+    lines = np.array(camera.get("lines",[]))
     
     for line in lines:
         lineStart = sv.Point(line.get('start1',0),line.get('start2',0))
@@ -52,31 +59,39 @@ def processLines(camera,video_file_path):
         lineZone = sv.LineZone(
                 lineStart,
                 lineEnd,
-                triggering_anchors= (sv.Position.BOTTOM_CENTER,)
+                triggering_anchors= (sv.Position.CENTER,)
                 )
 
         lineZoneAnnotator = sv.LineZoneAnnotator(
                                 text_scale=0.8,
                                 text_orient_to_line=True,
-                                display_in_count= True
+                                display_in_count= line.get('in_enabled', True),
+                                custom_in_text= line.get('custom_in_text', 'in'),
+                                display_out_count= line.get('out_enabled', True),
+                                custom_out_text=line.get('custom_out_text', 'out')
                             )
         lineZones.append(lineZone)
         lineZoneAnnotators.append({"lineCounter": lineZone,"lineZones":[] ,"lineZoneAnnotator": lineZoneAnnotator})
     lineZoneAnnotators.append({"lineCounter":{},"lineZones":lineZones ,"lineZoneAnnotator": sv.LineZoneAnnotatorMulticlass(
-                                    text_scale=0.8,
+                                    text_scale=0.5,
                                     text_thickness=2,
-                                    table_margin=20
+                                    table_margin=20,                                    
                                 )})
     processFrameAnnotator(POLYGON, lineZones, lineZoneAnnotators, video_file_path)
+    return lines
 
     
 def processFrameAnnotator(POLYGON, lineZones, lineZoneAnnotators, video_file_path):
     frame_generator = sv.get_video_frames_generator(source_path=video_file_path)
     for frame in frame_generator:
-        result = model(frame, device="cuda", verbose= False, imgsz = 1920, conf=0.3, iou = 0.7 )[0]
-        polygon_zone = sv.PolygonZone(polygon=POLYGON, triggering_anchors= (sv.Position.CENTER,))    
+        result = model(frame, device="cuda", verbose= False, conf=0.6)[0]
+         
         detections = sv.Detections.from_ultralytics(result)
-        detections[polygon_zone.trigger(detections)]
+
+        if POLYGON.any():
+            polygon_zone = sv.PolygonZone(polygon=POLYGON, triggering_anchors= (sv.Position.CENTER,))   
+            detections = detections[polygon_zone.trigger(detections)]
+
         detections = detections[np.isin(detections.class_id, CLASSES)]
         detections = tracker.update_with_detections(detections)
         detections = smoother.update_with_detections(detections)    
@@ -93,12 +108,14 @@ def processFrameAnnotator(POLYGON, lineZones, lineZoneAnnotators, video_file_pat
             lineZone.trigger(detections= detections)
 
         annotated_frame = frame.copy()
-        annotated_frame = sv.draw_polygon(
-            scene= annotated_frame,
-            polygon=POLYGON,
-            color= sv.Color.RED,
-            thickness= 2
-            )
+
+        if POLYGON.any():
+            annotated_frame = sv.draw_polygon(
+                scene= annotated_frame,
+                polygon=POLYGON,
+                color= sv.Color.RED,
+                thickness= 2
+                )
         annotated_frame = box_annotator.annotate(
             scene= annotated_frame,
             detections = detections
@@ -137,18 +154,26 @@ def main(video_file_path):
     data = readJsonFile("intersections.json")
     currentCamera = Path(video_file_path).parent.name
     currentIntersection= Path(video_file_path).parent.parent.name
-    processIntersection(data, currentIntersection,currentCamera, video_file_path)
+    return processIntersection(data, currentIntersection,currentCamera, video_file_path)
 
-def processJsonResults():
+def processJsonResults(lines:np.array):
+    if not lines.any():
+        return "The configuration for the video was not found."
     result = {}
     lineZoneCounter = 0
     for lineZone in lineZones:        
-        lineZoneId = 'lineZone'+ str(lineZoneCounter) #TODO: Map lineZoneId with Movement Name
-        result[lineZoneId] = {}
+        currentLine = lines[lineZoneCounter]
+        if currentLine.get("in_enabled", True):
+            result[currentLine.get("custom_in_text", "in")] ={}
+        if currentLine.get("out_enabled", True):
+            result[currentLine.get("custom_out_text", "out")] ={}
         for Class in CLASSES:                     
-            if Class in lineZone.in_count_per_class.keys():
+            if currentLine.get("in_enabled", True) and Class in lineZone.in_count_per_class.keys():
                 modelName = str(lineZone.class_id_to_name[Class])
-                result['lineZone'+ str(lineZoneCounter)][modelName] = lineZone.in_count_per_class[Class]
+                result[currentLine.get("custom_in_text", "in")][modelName] = lineZone.in_count_per_class[Class]
+            if currentLine.get("out_enabled", True) and Class in lineZone.out_count_per_class.keys():
+                modelName = str(lineZone.class_id_to_name[Class])
+                result[currentLine.get("custom_out_text", "out")][modelName] = lineZone.out_count_per_class[Class]
         lineZoneCounter= lineZoneCounter +1
     return json.dumps(result)
        
@@ -158,6 +183,6 @@ if __name__ =="__main__":
     parser.add_argument("--video_file_path")
     args = parser.parse_args()
 
-    main(args.video_file_path)
-    print(processJsonResults())
+    lines = main(args.video_file_path)
+    print(processJsonResults(lines))
     
