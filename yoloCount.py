@@ -3,8 +3,6 @@ import openpyxl
 import json
 import os
 
-
-
 def run(folder_path):
     # Call the second Python script and capture its output
     file_list = os.listdir(folder_path)
@@ -18,51 +16,32 @@ def run(folder_path):
             ]
             result = subprocess.run(['venv/Scripts/python', 'app.py'] + params, capture_output=True, text=True)
             output = result.stdout
-            variables = json.loads(output.strip())
-            # buildExcel(variables)
+        variables = json.loads(output.strip())
 
-   
+        buildExcel(variables, file_name)
 
-def buildExcel(variables):
-     # Create a new Excel workbook and select the active worksheet
+def buildExcel(variables, file_name):
     wb = openpyxl.Workbook()
     ws = wb.active
+    startRow =2
+    headers = set()
+    for key,value in variables.items():
+        headers.update(value.keys())
+    headers = list(headers)
+    
+    for col_num, header in enumerate(headers, start=2):
+        ws.cell(row=startRow, column=col_num, value=header)
 
-    # Populate the worksheet with the extracted variables
-    row = 1
-    col = 1
-    # for data_labels in labels:
-    #     ws.cell(row=row, column=data_labels.col, value=data_labels.Name)
-    #     col+=1
+    startRow += 1
+    for property_name, value in variables.items():
+        ws.cell(row=startRow, column=1, value=property_name)
+        for col_num, header in enumerate(headers, start=2):
+            ws.cell(row=startRow, column=col_num, value=value.get(header, ""))
+        startRow += 1
 
-    # ws.cell(row=row, column=col, value='INTERSECCIÓN')
-    # ws.cell(row=row, column=col, value='DÍA')
-    # ws.cell(row=row, column=col, value='FECHA')
-    # ws.cell(row=row, column=col, value='HORA INICIO')
-    # ws.cell(row=row, column=col, value='HORA FIN')
-    # ws.cell(row=row, column=col, value='MOVIMIENTO')
-    # ws.cell(row=row, column=col, value='AUTOS')
-    # ws.cell(row=row, column=col, value='BUS')
-    # ws.cell(row=row, column=col, value='SITP')
-    # ws.cell(row=row, column=col, value='C2P')
-    # ws.cell(row=row, column=col, value='C2G')
-    # ws.cell(row=row, column=col, value='C3')
-    # ws.cell(row=row, column=col, value='C4')
-    # ws.cell(row=row, column=col, value='C5')
-    # ws.cell(row=row, column=col, value='MOTO')
-
-
-    #  Iterate over each dictionary in the list
-    # for data_dict in variables:
-    #     for key, value in data_dict.items():
-    #     # Insert the value in the next row
-    #         ws.cell(row=row, column=labels[key].col, value=value)
-    #     row += 1  # Skip a row before processing the next dictionary
-
-    # Save the workbook
-    wb.save('CORREDOR VERDE CALLE 134 ATIP.xlsx')
+    wb.save(f"{file_name}.xlsx")
 
 
 if __name__ == "__main__":
-    folderPath = "C:/Users/Usuario/source/repos/YoloCuento/data"
+    folderPath = "./data"
     run(folderPath)
