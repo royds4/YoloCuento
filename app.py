@@ -82,7 +82,7 @@ def processLines(camera,video_file_path):
 
     
 def processFrameAnnotator(POLYGON, lineZones, lineZoneAnnotators, video_file_path):
-    frame_generator = sv.get_video_frames_generator(source_path=video_file_path)
+    frame_generator = sv.get_video_frames_generator(source_path=video_file_path, stride=10)
     for frame in frame_generator:
         result = model(frame, device="cuda", verbose= False, conf=0.6)[0]
          
