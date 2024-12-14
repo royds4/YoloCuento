@@ -42,7 +42,7 @@
                           ],
               "lines" : [
                  { "start1":805, "start2":363, "end1":707, "end2":421, "custom_out_text":"7", "in_enabled": false},
-                 { "start1":386, "start2":574, "end1":1069, "end2":671, "custom_in_text":"4", "custom_out_text":"3"},
+                 { "start1":286, "start2":574, "end1":1069, "end2":671, "custom_in_text":"4", "custom_out_text":"3"},
                  { "start1":1149, "start2":429, "end1":1220, "end2":378, "custom_in_text":"5", "out_enabled": false}
               ]
 						 }

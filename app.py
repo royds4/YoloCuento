@@ -82,9 +82,9 @@ def processLines(camera,video_file_path):
 
     
 def processFrameAnnotator(POLYGON, lineZones, lineZoneAnnotators, video_file_path):
-    frame_generator = sv.get_video_frames_generator(source_path=video_file_path, stride=10)
+    frame_generator = sv.get_video_frames_generator(source_path=video_file_path)
     for frame in frame_generator:
-        result = model(frame, device="cuda", verbose= False, conf=0.6)[0]
+        result = model(frame, device="cuda", verbose= False, conf=0.25, iou = 0.7)[0]
          
         detections = sv.Detections.from_ultralytics(result)
 
