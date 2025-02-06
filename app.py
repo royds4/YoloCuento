@@ -6,10 +6,10 @@ import numpy as np
 import supervision as sv
 from ultralytics import YOLO
 
-CLASSES = [1,2,3,5,7]
+CLASSES = [0,1,2,3,4,5,6,7,8]
 VIDEOPATH=""
 LINES = []
-model = YOLO("yolo11x.pt")
+model = YOLO("best.pt")
 tracker = sv.ByteTrack(minimum_consecutive_frames=3)
 tracker.reset()
 smoother =sv.DetectionsSmoother()
@@ -27,10 +27,19 @@ def readJsonFile(file_path):
 
 def processIntersection(data, currentIntersection, currentCamera,video_file_path):
     intersections = data.get("intersections",[])
+    intersectionProcessed = False
     for intersection in intersections:
         name = intersection.get("name",'')
         if currentIntersection in name:
-            return processCameras(intersection, currentCamera, video_file_path)           
+            intersectionProcessed = True
+            return processCameras(intersection, currentCamera, video_file_path)    
+    if intersectionProcessed == False:
+        processFrameAnnotator(
+            POLYGON=np.array([]),
+            lineZones=np.array([]),
+            lineZoneAnnotators=np.array([]),
+            video_file_path=video_file_path)
+        return []       
             
 def processCameras(intersection, currentCamera, video_file_path):
     cameras = intersection.get("cameras",[])
@@ -42,9 +51,9 @@ def processCameras(intersection, currentCamera, video_file_path):
             return processLines(camera, video_file_path)            
     if cameraProcessed == False:
         processFrameAnnotator(
-            POLYGON=[],
-            lineZones=[],
-            lineZoneAnnotators=[],
+            POLYGON=np.array([]),
+            lineZones=np.array([]),
+            lineZoneAnnotators=np.array([]),
             video_file_path=video_file_path)
         return []
             
@@ -84,7 +93,7 @@ def processLines(camera,video_file_path):
 def processFrameAnnotator(POLYGON, lineZones, lineZoneAnnotators, video_file_path):
     frame_generator = sv.get_video_frames_generator(source_path=video_file_path)
     for frame in frame_generator:
-        result = model(frame, device="cuda", verbose= False, conf=0.6)[0]
+        result = model(frame, device="cuda", verbose= False, conf=0.25, iou = 0.7)[0]
          
         detections = sv.Detections.from_ultralytics(result)
 
@@ -92,7 +101,7 @@ def processFrameAnnotator(POLYGON, lineZones, lineZoneAnnotators, video_file_pat
             polygon_zone = sv.PolygonZone(polygon=POLYGON, triggering_anchors= (sv.Position.CENTER,))   
             detections = detections[polygon_zone.trigger(detections)]
 
-        detections = detections[np.isin(detections.class_id, CLASSES)]
+        #detections = detections[np.isin(detections.class_id, CLASSES)]
         detections = tracker.update_with_detections(detections)
         detections = smoother.update_with_detections(detections)    
         

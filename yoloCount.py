@@ -3,66 +3,61 @@ import openpyxl
 import json
 import os
 
-
+# mockData = '{"7": {"car": 2}, "4": {"car": 18}, "3": {"car": 1}, "5": {"truck": 1}}'
 
 def run(folder_path):
     # Call the second Python script and capture its output
     file_list = os.listdir(folder_path)
 
     for file_name in file_list:
-        if 'dav' not in file_name:
-            run(folder_path + '/' + file_name)
-        else:
+        full_path = os.path.join(folder_path, file_name)
+        if os.path.isdir(full_path):
+            run(full_path)
+        elif file_name.endswith('.dav') or file_name.endswith('.mp4'):
             params = [
-            '--video_file_path', folder_path+ '/'+file_name
+            '--video_file_path', full_path
             ]
-            result = subprocess.run(['venv/Scripts/python', 'app.py'] + params, capture_output=True, text=True)
-            output = result.stdout
-            variables = json.loads(output.strip())
-            # buildExcel(variables)
+            result = subprocess.run(['yolovenv/Scripts/python', 'app.py'] + params, capture_output=True, text=True)
+            output = result.stdout.strip()
+            if "." in output:
+                output = output.replace('\n', ' ').split(".")[2].strip()
+            if output and output.startswith('{') and output.endswith('}'):
+                variables = json.loads(output)
+                buildExcel(variables, file_name)
+            else:
+                print(f"Invalid or empty output for file: {file_name}")
 
-   
-
-def buildExcel(variables):
-     # Create a new Excel workbook and select the active worksheet
+def buildExcel(variables, file_name):
     wb = openpyxl.Workbook()
     ws = wb.active
+    startRow =2
+    headers = set()
 
-    # Populate the worksheet with the extracted variables
-    row = 1
-    col = 1
-    # for data_labels in labels:
-    #     ws.cell(row=row, column=data_labels.col, value=data_labels.Name)
-    #     col+=1
+    ws.cell(row=startRow, column=1, value='Movimiento')
 
-    # ws.cell(row=row, column=col, value='INTERSECCIÓN')
-    # ws.cell(row=row, column=col, value='DÍA')
-    # ws.cell(row=row, column=col, value='FECHA')
-    # ws.cell(row=row, column=col, value='HORA INICIO')
-    # ws.cell(row=row, column=col, value='HORA FIN')
-    # ws.cell(row=row, column=col, value='MOVIMIENTO')
-    # ws.cell(row=row, column=col, value='AUTOS')
-    # ws.cell(row=row, column=col, value='BUS')
-    # ws.cell(row=row, column=col, value='SITP')
-    # ws.cell(row=row, column=col, value='C2P')
-    # ws.cell(row=row, column=col, value='C2G')
-    # ws.cell(row=row, column=col, value='C3')
-    # ws.cell(row=row, column=col, value='C4')
-    # ws.cell(row=row, column=col, value='C5')
-    # ws.cell(row=row, column=col, value='MOTO')
+    for key,value in variables.items():
+        headers.update(value.keys())
+    headers = list(headers)
+    
+    for col_num, header in enumerate(headers, start=2):
+        ws.cell(row=startRow, column=col_num, value=header)
 
+    startRow += 1
+    for property_name, value in variables.items():
+        ws.cell(row=startRow, column=1, value=property_name)
+        for col_num, header in enumerate(headers, start=2):
+            ws.cell(row=startRow, column=col_num, value=value.get(header, 0))
+        startRow += 1
 
-    #  Iterate over each dictionary in the list
-    # for data_dict in variables:
-    #     for key, value in data_dict.items():
-    #     # Insert the value in the next row
-    #         ws.cell(row=row, column=labels[key].col, value=value)
-    #     row += 1  # Skip a row before processing the next dictionary
+    ws.cell(row=startRow, column=1, value='Grand Total')
+    for col_num, header in enumerate(headers, start=2):
+            col_letter = openpyxl.utils.get_column_letter(col_num)
+            sum_formula = f"=SUM({col_letter}3:{col_letter}{startRow-1})"
+            ws.cell(row=startRow, column=col_num, value=sum_formula)
 
-    # Save the workbook
-    wb.save('CORREDOR VERDE CALLE 134 ATIP.xlsx')
+    wb.save(f"{file_name}.xlsx")
 
 
 if __name__ == "__main__":
-    folderPath = "C:/Users/Usuario/source/repos/YoloCuento/data"
+    folderPath = "./data"
     run(folderPath)
