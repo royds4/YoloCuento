@@ -10,18 +10,22 @@ def run(folder_path):
     file_list = os.listdir(folder_path)
 
     for file_name in file_list:
-        if 'dav' not in file_name and 'mp4' not in file_name:
-            run(folder_path + '/' + file_name)
-        else:
+        full_path = os.path.join(folder_path, file_name)
+        if os.path.isdir(full_path):
+            run(full_path)
+        elif file_name.endswith('.dav') or file_name.endswith('.mp4'):
             params = [
-            '--video_file_path', folder_path+ '/'+file_name
+            '--video_file_path', full_path
             ]
-            result = subprocess.run(['venv/Scripts/python', 'app.py'] + params, capture_output=True, text=True)
-            output = result.stdout
+            result = subprocess.run(['yolovenv/Scripts/python', 'app.py'] + params, capture_output=True, text=True)
+            output = result.stdout.strip()
             if "." in output:
-                output = output.split('.')[2]            
-            variables = json.loads(output.strip())
-            buildExcel(variables, file_name)
+                output = output.replace('\n', ' ').split(".")[2].strip()
+            if output and output.startswith('{') and output.endswith('}'):
+                variables = json.loads(output)
+                buildExcel(variables, file_name)
+            else:
+                print(f"Invalid or empty output for file: {file_name}")
 
 def buildExcel(variables, file_name):
     wb = openpyxl.Workbook()
