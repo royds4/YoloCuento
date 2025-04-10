@@ -160,7 +160,7 @@ def processFrameAnnotator(POLYGON, lineZones, lineZoneAnnotators, video_file_pat
                 )
 
         cv2.imshow("Processed Video", annotated_frame)
-        if cv2.waitKey(33) & 0xFF == ord("q"):
+        if cv2.waitKey(1) & 0xFF == ord("q"):
             break
     cv2.destroyAllWindows()
 
