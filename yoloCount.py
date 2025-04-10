@@ -25,7 +25,7 @@ def run(folder_path):
                 variables = json.loads(output)
                 buildExcel(variables, file_name)
             else:
-                print(f"Invalid or empty output for file: {file_name}")
+                print(f"Invalid or empty output for file: {file_name}. Output:{output}")
 
 def buildExcel(variables, file_name):
     wb = openpyxl.Workbook()

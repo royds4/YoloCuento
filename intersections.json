@@ -74,6 +74,199 @@
               ]
 						 }
 						]
+   },
+   {"id":"", 
+   "name": "ASuba", 
+   "cameras":[ 
+						 {
+						  "id":"",
+						  "name": "CAM12",
+						  "movements": [],
+              "polygon": [
+                  [43.997, 412.197], 
+                  [1695.309, 467.546], 
+                  [1919.999, 763.584], 
+                  [1919.999, 1080.000], 
+                  [0.000, 1080.000], 
+                  [0.000, 603.000], 
+                  [0.000, 488.517]
+              ],
+              "lines": [
+                  { "start1":170.581, "start2":595.197, "end1":530.297, "end2":633.729, "custom_out_text": "3+92", "in_enabled": false },
+                  { "start1":579.029, "start2":708.438, "end1":927.869, "end2":727.500, "custom_in_text": "42", "custom_out_text": "41" },
+                  { "start1":1038.027, "start2":627.849, "end1":1708.527, "end2":638.349, "custom_in_text": "4+94", "out_enabled": false }
+              ]
+						 }
+						]
+   },
+   {"id":"", 
+   "name": "Cll 103 - 68", 
+   "cameras":[ 
+						 {
+						  "id":"",
+						  "name": "CAM1",
+						  "movements": [],
+              "polygon": [
+
+              ],
+              "lines": [
+                  { "start1":431.000, "start2":237.900, "end1":138.000, "end2":234.200,"custom_in_text": "1+5", "out_enabled": false },
+                  { "start1":542.000, "start2":241.200, "end1":630.000, "end2":396.400, "custom_in_text": "5", "custom_out_text": "8" }
+              ]
+						 }
+						]
+   },
+   {"id":"", 
+   "name": "AC 100", 
+   "cameras":[ 
+						 {
+						  "id":"",
+						  "name": "1-4",
+						  "movements": [],
+              "polygon": [
+
+              ],
+              "lines": [
+                { "start1":111.566, "start2":263.222, "end1":240.672, "end2":207.932, "custom_out_text": "4", "in_enabled": false },
+                { "start1":259.318, "start2":211.974, "end1":399.096, "end2":243.798, "custom_in_text": "1", "out_enabled": false },
+                { "start1":285.055, "start2":201.144, "end1":350.372, "end2":153.497, "custom_out_text": "4a", "in_enabled": false }
+              ]
+						 },
+             {
+						  "id":"",
+						  "name": "2-94",
+						  "movements": [],
+              "polygon": [
+
+              ],
+              "lines": [
+                { "start1":328.056, "start2":479.999, "end1":374.764, "end2":262.899, "custom_out_text": "94", "in_enabled": false },
+                { "start1":536.548, "start2":141.554, "end1":639.999, "end2":118.348, "custom_out_text": "2", "in_enabled": false }
+              ]
+						 },
+             {
+						  "id":"",
+						  "name": "3-92",
+						  "movements": [],
+              "polygon": [
+
+              ],
+              "lines": [
+                { "start1":196.173, "start2":294.872, "end1":285.426, "end2":256.243, "custom_out_text": "3+92", "in_enabled": false }
+              ]
+						 },
+             {
+						  "id":"",
+						  "name": "92a-94a",
+						  "movements": [],
+              "polygon": [
+
+              ],
+              "lines": [
+                { "start1":405.428, "start2":300.052, "end1":497.646, "end2":508.872, "custom_in_text": "92a", "custom_out_text": "94a" }
+              ]
+						 },
+             {
+						  "id":"",
+						  "name": "93 PEAT",
+						  "movements": [],
+              "polygon": [
+
+              ],
+              "lines": [
+                { "start1":6.316, "start2":308.000, "end1":160.000, "end2":332.999, "custom_in_text": "93", "out_enabled": false },
+                { "start1":266.000, "start2":286.000, "end1":196.000, "end2":73.999, "custom_in_text": "PEAT", "out_enabled": false }
+              ]
+						 }
+						]
+   },
+   {"id":"", 
+   "name": "AC 116", 
+   "cameras":[ 
+						 {
+						  "id":"",
+						  "name": "1",
+						  "movements": [],
+              "polygon": [
+
+              ],
+              "lines": [
+                { "start1":415.870, "start2":920.425, "end1":178.788, "end2":1117.798, "custom_in_text": "93", "out_enabled": false },
+                { "start1":427.276, "start2":918.425, "end1":1617.910, "end2":906.579, "custom_out_text": "1", "in_enabled": false }
+              ]
+						 },
+             {
+						  "id":"",
+						  "name": "2",
+						  "movements": [],
+              "polygon": [
+
+              ],
+              "lines": [
+                { "start1":98.731, "start2":405.960, "end1":504.570, "end2":291.952, "custom_in_text": "2+94", "out_enabled": false }
+                  
+              ]
+						 },
+             {
+						  "id":"",
+						  "name": "3",
+						  "movements": [],
+              "polygon": [
+
+              ],
+              "lines": [
+                { "start1":0.704, "start2":323.487, "end1":248.392, "end2":340.403, "custom_out_text": "3+92", "in_enabled": false },
+                { "start1":598.654, "start2":270.556, "end1":1062.891, "end2":268.799, "custom_in_text": "4+94", "out_enabled": false }
+              ]
+						 },
+             {
+						  "id":"",
+						  "name": "4",
+						  "movements": [],
+              "polygon": [
+
+              ],
+              "lines": [
+                { "start1":349.392, "start2":395.226, "end1":577.969, "end2":431.226, "custom_in_text": "6", "out_enabled": false },
+                { "start1":631.969, "start2":426.226, "end1":1007.969, "end2":557.226, "custom_in_text": "4", "out_enabled": false },
+                { "start1":643.969, "start2":389.226, "end1":671.969, "end2":355.226, "custom_in_text": "94a", "out_enabled": false }
+              ]
+						 }
+						]
+   },
+   {"id":"", 
+   "name": "CL 97 x KR 58", 
+   "cameras":[ 
+						 {
+						  "id":"",
+						  "name": "1",
+						  "movements": [],
+              "polygon": [
+
+              ],
+              "lines": [
+                { "start1":1383.333, "start2":638.333, "end1":1704.167, "end2":724.167, "custom_in_text": "3+5", "out_enabled": false },
+                { "start1":1734.167, "start2":855.000, "end1":1772.500, "end2":708.333, "custom_in_text": "1+93", "out_enabled": false }
+              ]
+						 }
+						]
+   },
+   {"id":"", 
+   "name": "CL 97 x KR 64", 
+   "cameras":[ 
+						 {
+						  "id":"",
+						  "name": "1",
+						  "movements": [],
+              "polygon": [
+
+              ],
+              "lines": [
+                  { "start1":431.000, "start2":237.900, "end1":138.000, "end2":234.200,"custom_in_text": "1+5", "out_enabled": false },
+                  { "start1":542.000, "start2":241.200, "end1":630.000, "end2":396.400, "custom_in_text": "5", "custom_out_text": "8" }
+              ]
+						 }
+						]
    }
  ]
 }
