@@ -156,9 +156,13 @@ dmypy.json
 cython_debug/
 
 #yolo data
-data/A-Peaje/
+data/
 datasets/
 runs/
+Results/
+wandb/
+YOLO11/
+Toll_Vehicle_Detection/
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can

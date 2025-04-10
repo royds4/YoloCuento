@@ -5,8 +5,14 @@ from pathlib import Path
 import numpy as np
 import supervision as sv
 from ultralytics import YOLO
+import torch
+# Before processing
+torch.cuda.empty_cache()
 
-CLASSES = [0,1,2,3,4,5,6,7,8]
+CLASSES = [0,1,2,3,4,5,6,7,8,9,10,11]
+CLASS_NAMES = ['2-axis', '3and4-axis', '5-axis', '6andmore-axis', 'BRT', 'bicycle', 'bus', 'car', 'microbus', 'motorbike', 'scooter', 'sitp']
+MODEL_CONF = 0.493
+MODEL_IOU = 0.5
 VIDEOPATH=""
 LINES = []
 model = YOLO("best.pt")
@@ -93,7 +99,7 @@ def processLines(camera,video_file_path):
 def processFrameAnnotator(POLYGON, lineZones, lineZoneAnnotators, video_file_path):
     frame_generator = sv.get_video_frames_generator(source_path=video_file_path)
     for frame in frame_generator:
-        result = model(frame, device="cuda", verbose= False, conf=0.25, iou = 0.7)[0]
+        result = model(frame, device="cuda", verbose= False, conf=MODEL_CONF, iou = MODEL_IOU)[0]
          
         detections = sv.Detections.from_ultralytics(result)
 
@@ -107,9 +113,8 @@ def processFrameAnnotator(POLYGON, lineZones, lineZoneAnnotators, video_file_pat
         
 
         labels = [
-            f"#{tracker_id}"
-            for tracker_id 
-            in detections.tracker_id
+            f"{CLASS_NAMES[class_id]} #{tracker_id} {confidence:.2f}"
+            for class_id, tracker_id, confidence in zip(detections.class_id, detections.tracker_id, detections.confidence)
         ]
 
         lineZone:sv.LineZone
